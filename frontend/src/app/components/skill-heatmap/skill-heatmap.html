@@ -1,0 +1,25 @@
+<div class="heatmap-container">
+    <h3>Skill Heatmap</h3>
+    <div class="skills-list">
+        <div *ngFor="let skill of skills" class="skill-row">
+            <div class="skill-header">
+                <span class="skill-name">{{ skill.name }}</span>
+                <span class="skill-value">{{ getRating(skill.id) }}</span>
+            </div>
+            <div class="slider-wrapper">
+                <input type="range" min="0" max="100" [value]="getRating(skill.id)"
+                    (input)="onSliderChange(skill.id, $event)" [disabled]="readOnly" class="skill-slider" />
+                <div *ngIf="skill.targetLevel && isManagerView" class="target-marker"
+                    [style.left.%]="skill.targetLevel">
+                    <div class="target-line"></div>
+                    <div class="target-label">Target</div>
+                </div>
+                <!-- <div *ngIf="employeeName && getEmployeeSelfRating(skill.id) > 0" class="employee-marker"
+                    [style.left.%]="getEmployeeSelfRating(skill.id)">
+                    <div class="employee-line"></div>
+                    <div class="employee-label">{{ employeeName }} - {{ getEmployeeSelfRating(skill.id) }}</div>
+                </div> -->
+            </div>
+        </div>
+    </div>
+</div>

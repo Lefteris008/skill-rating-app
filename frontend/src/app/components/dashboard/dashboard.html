@@ -1,0 +1,28 @@
+<div class="dashboard-container">
+    <header class="dashboard-header">
+        <div>
+            <h1>Dashboard</h1>
+            <p *ngIf="user" class="welcome-text">Welcome, {{ user.realName }}</p>
+        </div>
+        <button *ngIf="user" (click)="logout()" class="logout-btn">Logout</button>
+    </header>
+
+    <main>
+        <div *ngIf="user?.role === 'admin'">
+            <h3>Admin Actions</h3>
+            <button routerLink="/admin">Manage Users</button>
+        </div>
+
+        <div *ngIf="user?.role === 'manager'">
+            <h3>Manager Actions</h3>
+            <button routerLink="/skills-management">Manage Skills</button>
+            <button routerLink="/team-roles">Manage Team Roles</button>
+            <button routerLink="/manager-rating">Rate Team Members</button>
+        </div>
+
+        <div *ngIf="user?.role === 'employee'">
+            <h3>Employee Actions</h3>
+            <app-skill-heatmap></app-skill-heatmap>
+        </div>
+    </main>
+</div>

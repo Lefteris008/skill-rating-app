@@ -1,0 +1,74 @@
+.team-roles-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #eee;
+}
+
+.back-btn {
+    padding: 8px 16px;
+    background: #666;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.employee-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.employee-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.employee-info h3 {
+    margin: 0 0 5px 0;
+}
+
+.employee-info p {
+    margin: 0;
+    color: #666;
+}
+
+.role-assignment {
+    display: flex;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+select {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    min-width: 150px;
+}
+
+.no-data {
+    text-align: center;
+    color: #666;
+    padding: 40px;
+    background: #f5f5f5;
+    border-radius: 8px;
+}

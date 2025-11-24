@@ -1,0 +1,58 @@
+<div class="results-container">
+    <header>
+        <h2>Rating Results for {{ employeeName }}</h2>
+        <button routerLink="/manager-rating" class="back-btn">← Back to List</button>
+    </header>
+
+    <div class="results-content">
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-marker target"></div>
+                <span>Target</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-marker employee"></div>
+                <span>{{ employeeName }} - Self Rating</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-marker manager"></div>
+                <span>{{ managerName }} - Manager Rating</span>
+            </div>
+        </div>
+
+        <div class="skills-list">
+            <div *ngFor="let skill of skills" class="skill-row">
+                <div class="skill-header">
+                    <span class="skill-name">{{ skill.name }}</span>
+                </div>
+                <div class="slider-wrapper">
+                    <input type="range" min="0" max="100" [value]="0" disabled class="skill-slider" />
+
+                    <!-- Target marker -->
+                    <div *ngIf="skill.targetLevel" class="marker target-marker" [style.left.%]="skill.targetLevel">
+                        <div class="marker-line"></div>
+                        <!-- <div class="marker-label" [style.top]="getLabelTop(skill.id, 'target')">Target</div> -->
+                    </div>
+
+                    <!-- Employee self-rating marker -->
+                    <div *ngIf="getRatingsForSkill(skill.id).employeeRating > 0" class="marker employee-marker"
+                        [style.left.%]="getRatingsForSkill(skill.id).employeeRating">
+                        <div class="marker-line"></div>
+                        <div class="marker-label" [style.top]="getLabelTop(skill.id, 'employee')">
+                            {{ employeeName }} - {{ getRatingsForSkill(skill.id).employeeRating }}
+                        </div>
+                    </div>
+
+                    <!-- Manager rating marker -->
+                    <div *ngIf="getRatingsForSkill(skill.id).managerRating > 0" class="marker manager-marker"
+                        [style.left.%]="getRatingsForSkill(skill.id).managerRating">
+                        <div class="marker-line"></div>
+                        <div class="marker-label" [style.top]="getLabelTop(skill.id, 'manager')">
+                            {{ managerName }} - {{ getRatingsForSkill(skill.id).managerRating }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

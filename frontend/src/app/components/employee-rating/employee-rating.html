@@ -1,0 +1,18 @@
+<div class="employee-rating-container">
+    <header>
+        <h2>Rate Employee: {{ employeeName }}</h2>
+        <button routerLink="/manager-rating" class="back-btn">← Back to List</button>
+    </header>
+
+    <div class="rating-section">
+        <app-skill-heatmap [userId]="employeeId" [readOnly]="false" [employeeName]="employeeName"
+            [isManagerView]="true">
+        </app-skill-heatmap>
+    </div>
+
+    <div class="submit-section">
+        <button (click)="submitRatings()" [disabled]="isSubmitting" class="submit-btn">
+            {{ isSubmitting ? 'Submitting...' : 'Submit Ratings' }}
+        </button>
+    </div>
+</div>

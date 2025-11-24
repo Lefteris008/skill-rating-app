@@ -1,0 +1,26 @@
+<div class="manager-rating-container">
+    <header>
+        <h2>Rate Team Members</h2>
+        <div class="header-actions">
+            <button routerLink="/dashboard" class="back-btn">← Dashboard</button>
+            <button (click)="logout()" class="logout-btn">Logout</button>
+        </div>
+    </header>
+
+    <p *ngIf="!employees || employees.length === 0" class="no-data-message">
+        No team members to rate yet. Employees need to complete their self-assessments first.
+    </p>
+
+    <div *ngIf="employees && employees.length > 0">
+        <p>Select a team member to rate:</p>
+        <ul class="employee-list">
+            <li *ngFor="let employee of employees">
+                <button (click)="selectEmployee(employee)" [class.rated]="isRated(employee.id)">
+                    {{ employee.realName }}
+                    <span *ngIf="isRated(employee.id)" class="rated-badge">✅ Rated</span>
+                    <span *ngIf="!isRated(employee.id)" class="not-rated-badge">ℹ️ Not yet rated</span>
+                </button>
+            </li>
+        </ul>
+    </div>
+</div>

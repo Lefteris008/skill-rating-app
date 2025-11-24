@@ -1,0 +1,34 @@
+<div class="team-roles-container">
+    <header>
+        <h2>Manage Team Roles</h2>
+        <button routerLink="/dashboard" class="back-btn">← Dashboard</button>
+    </header>
+
+    <div class="employee-list">
+        <div class="employee-card" *ngFor="let employee of employees">
+            <div class="employee-info">
+                <h3>{{ employee.realName }}</h3>
+                <p>{{ employee.email }}</p>
+            </div>
+            <div class="role-assignment">
+                <div class="form-group">
+                    <label>Current Role:</label>
+                    <select [(ngModel)]="employee.currentRoleId" (change)="updateRoles(employee)">
+                        <option [ngValue]="null">Select Role</option>
+                        <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Target Role:</label>
+                    <select [(ngModel)]="employee.targetRoleId" (change)="updateRoles(employee)">
+                        <option [ngValue]="null">Select Role</option>
+                        <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="employees.length === 0" class="no-data">
+            No employees assigned to you.
+        </div>
+    </div>
+</div>

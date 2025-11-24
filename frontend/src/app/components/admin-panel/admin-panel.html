@@ -1,0 +1,167 @@
+<div class="admin-container">
+    <header class="admin-header">
+        <h2>Admin Panel</h2>
+        <div class="header-actions">
+            <button routerLink="/dashboard" class="back-btn">← Dashboard</button>
+            <button (click)="logout()" class="logout-btn">Logout</button>
+        </div>
+    </header>
+
+    <!-- Roles Management Section -->
+    <div class="section">
+        <h3>Manage Job Roles</h3>
+        <div class="add-form">
+            <input [(ngModel)]="newRoleName" placeholder="New Role Name" (keydown.enter)="addRole()" />
+            <button (click)="addRole()">+ Add Role</button>
+        </div>
+        <div class="role-list">
+            <div class="role-item" *ngFor="let role of roles">
+                <span>{{ role.name }}</span>
+                <button class="delete-btn-small" (click)="deleteRole(role.id)">×</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Management Section -->
+    <div class="section">
+        <h3>User Management</h3>
+
+        <!-- Create User Form -->
+        <div class="add-form">
+            <h4>Create New User</h4>
+            <input [(ngModel)]="newUser.realName" placeholder="Full Name" />
+            <input [(ngModel)]="newUser.email" type="email" placeholder="Email" />
+            <input [(ngModel)]="newUser.username" placeholder="Username" />
+            <input [(ngModel)]="newUser.password" type="password" placeholder="Password" />
+            <select [(ngModel)]="newUser.role">
+                <option value="employee">Employee</option>
+                <option value="manager">Manager</option>
+            </select>
+            <button (click)="addUser()">Create User</button>
+        </div>
+
+        <!-- Admin Users List -->
+        <h4>Admin Users</h4>
+        <div class="user-list">
+            <div class="user-item" *ngFor="let admin of admins">
+                <div class="user-details">
+                    <span class="user-name">{{ admin.realName }}</span>
+                    <span class="user-email">{{ admin.email }}</span>
+                    <span class="role-badge manager" style="width: fit-content; margin-top: 4px;">Admin</span>
+                </div>
+                <div class="button-group">
+                    <button class="edit-btn-small" (click)="startEdit(admin)">✎ Edit</button>
+                    <button class="delete-btn-small" (click)="deleteUser(admin)">× Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Managers Section with their teams -->
+    <div class="hierarchy-section" *ngFor="let manager of managers">
+        <div class="section-header clickable" (click)="toggleManager(manager.id)">
+            <div class="header-left">
+                <span class="expand-icon">{{ isExpanded(manager.id) ? '▼' : '▶' }}</span>
+                <span class="role-badge manager">Manager</span>
+                <span class="user-name">{{ manager.realName }}</span>
+            </div>
+            <div class="header-right">
+                <button class="edit-btn-small" (click)="startEdit(manager); $event.stopPropagation()">✎</button>
+                <button class="delete-btn-small" (click)="deleteUser(manager); $event.stopPropagation()">×</button>
+                <span class="count">{{ getManagerTeam(manager.id).length }} employees</span>
+            </div>
+        </div>
+        <div class="user-list" *ngIf="isExpanded(manager.id)">
+            <div class="user-item employee-item" *ngFor="let employee of getManagerTeam(manager.id)">
+                <div class="user-details">
+                    <span class="user-name">{{ employee.realName }}</span>
+                    <span class="user-email">{{ employee.email }}</span>
+                </div>
+                <div class="button-group">
+                    <button class="edit-btn-small" (click)="startEdit(employee)">✎</button>
+                    <button class="delete-btn-small" (click)="deleteUser(employee)">×</button>
+                    <button class="reassign-btn" (click)="startReassign(employee)">Reassign</button>
+                </div>
+            </div>
+            <div class="no-employees" *ngIf="getManagerTeam(manager.id).length === 0">
+                No employees assigned yet
+            </div>
+        </div>
+    </div>
+
+    <!-- Unassigned Employees Section -->
+    <div class="hierarchy-section" *ngIf="unassignedEmployees.length > 0">
+        <div class="section-header clickable" (click)="toggleSection('unassigned')">
+            <div class="header-left">
+                <span class="expand-icon">{{ isExpanded('unassigned') ? '▼' : '▶' }}</span>
+                <span class="role-badge unassigned">No Manager</span>
+            </div>
+            <span class="count">{{ unassignedEmployees.length }} employees</span>
+        </div>
+        <div class="user-list" *ngIf="isExpanded('unassigned')">
+            <div class="user-item employee-item" *ngFor="let employee of unassignedEmployees">
+                <div class="user-details">
+                    <span class="user-name">{{ employee.realName }}</span>
+                    <span class="user-email">{{ employee.email }}</span>
+                </div>
+                <div class="button-group">
+                    <button class="edit-btn-small" (click)="startEdit(employee)">✎</button>
+                    <button class="delete-btn-small" (click)="deleteUser(employee)">×</button>
+                    <button class="assign-btn" (click)="startReassign(employee)">Assign Manager</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Assignment Modal -->
+<div class="modal-overlay" *ngIf="reassigningEmployee" (click)="cancelReassign()">
+    <div class="modal" (click)="$event.stopPropagation()">
+        <h3>Assign Manager</h3>
+        <p>Employee: <strong>{{ reassigningEmployee?.realName }}</strong></p>
+        <div class="form-group">
+            <label>Select Manager:</label>
+            <select [(ngModel)]="selectedManagerId" class="manager-select">
+                <option [value]="null">No Manager</option>
+                <option *ngFor="let mgr of managers" [value]="mgr.id">
+                    {{ mgr.realName }}
+                </option>
+            </select>
+        </div>
+        <div class="modal-actions">
+            <button (click)="confirmReassign()">Assign</button>
+            <button (click)="cancelReassign()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal-overlay" *ngIf="editingUser" (click)="cancelEdit()">
+    <div class="modal" (click)="$event.stopPropagation()">
+        <h3>Edit User</h3>
+        <div class="form-group">
+            <label>Full Name:</label>
+            <input [(ngModel)]="editUserData.realName" placeholder="Full Name" />
+        </div>
+        <div class="form-group">
+            <label>Email:</label>
+            <input [(ngModel)]="editUserData.email" type="email" placeholder="Email" />
+        </div>
+        <div class="form-group">
+            <label>Username:</label>
+            <input [(ngModel)]="editUserData.username" placeholder="Username" />
+        </div>
+        <div class="form-group">
+            <label>Role:</label>
+            <select [(ngModel)]="editUserData.role" class="manager-select">
+                <option value="employee">Employee</option>
+                <option value="manager">Manager</option>
+                <option value="admin">Admin</option>
+            </select>
+        </div>
+        <div class="modal-actions">
+            <button (click)="confirmEdit()">Save Changes</button>
+            <button (click)="cancelEdit()">Cancel</button>
+        </div>
+    </div>
+</div>
