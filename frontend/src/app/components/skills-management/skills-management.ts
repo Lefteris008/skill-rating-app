@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { PageHeaderComponent } from '../shared/page-header/page-header';
 import { SkillsService } from '../../services/skills.service';
 import { AuthService } from '../../services/auth.service';
 import { JobRolesService, JobRole } from '../../services/job-roles.service';
@@ -9,7 +10,7 @@ import { JobRolesService, JobRole } from '../../services/job-roles.service';
 @Component({
     selector: 'app-skills-management',
     standalone: true,
-    imports: [CommonModule, FormsModule, RouterModule],
+    imports: [CommonModule, FormsModule, RouterModule, PageHeaderComponent],
     templateUrl: './skills-management.html',
     styleUrl: './skills-management.css',
 })

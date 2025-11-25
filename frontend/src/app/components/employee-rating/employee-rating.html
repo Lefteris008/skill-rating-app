@@ -1,8 +1,5 @@
 <div class="employee-rating-container">
-    <header>
-        <h2>Rate Employee: {{ employeeName }}</h2>
-        <button routerLink="/manager-rating" class="back-btn">← Back to List</button>
-    </header>
+    <app-page-header [title]="'Rate Employee: ' + employeeName" [backLink]="'/manager-rating'" [backLabel]="'← Back to List'"></app-page-header>
 
     <div class="rating-section">
         <app-skill-heatmap [userId]="employeeId" [readOnly]="false" [employeeName]="employeeName"
@@ -11,8 +8,20 @@
     </div>
 
     <div class="submit-section">
-        <button (click)="submitRatings()" [disabled]="isSubmitting" class="submit-btn">
+        <button (click)="openSubmitConfirmation()" [disabled]="isSubmitting" class="submit-btn">
             {{ isSubmitting ? 'Submitting...' : 'Submit Ratings' }}
         </button>
+    </div>
+</div>
+
+<div class="modal-overlay" *ngIf="showSubmitConfirmation" (click)="cancelSubmitConfirmation()">
+    <div class="modal confirmation-modal" (click)="$event.stopPropagation()">
+        <h4>Confirm Submission</h4>
+        <p>You are about to submit your ratings for your employee. Make sure the values are correct, as there is no
+            ability to modify them after this point.</p>
+        <div class="modal-actions">
+            <button class="cancel-btn" (click)="cancelSubmitConfirmation($event)">Cancel</button>
+            <button class="proceed-btn" (click)="confirmSubmitRatings($event)">Proceed</button>
+        </div>
     </div>
 </div>

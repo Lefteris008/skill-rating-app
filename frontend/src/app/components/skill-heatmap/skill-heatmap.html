@@ -4,7 +4,7 @@
         <div *ngFor="let skill of skills" class="skill-row">
             <div class="skill-header">
                 <span class="skill-name">{{ skill.name }}</span>
-                <span class="skill-value">{{ getRating(skill.id) }}</span>
+                    <span class="skill-value" *ngIf="showValues">{{ getRating(skill.id) }}</span>
             </div>
             <div class="slider-wrapper">
                 <input type="range" min="0" max="100" [value]="getRating(skill.id)"

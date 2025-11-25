@@ -1,8 +1,9 @@
-<div class="results-container">
-    <header>
-        <h2>Rating Results for {{ employeeName }}</h2>
-        <button routerLink="/manager-rating" class="back-btn">← Back to List</button>
-    </header>
+<div class="results-container" [class.manager-pending]="showManagerPendingMessage">
+    <app-page-header [title]="'Rating Results for ' + employeeName" [backLink]="backLink" [backLabel]="backLabel"></app-page-header>
+
+    <div *ngIf="showManagerPendingMessage" class="manager-warning">
+        Your manager has not yet rated your skills. Come back when the manager has completed your assessment.
+    </div>
 
     <div class="results-content">
         <div class="legend">

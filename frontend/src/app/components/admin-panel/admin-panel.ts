@@ -2,14 +2,15 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { PageHeaderComponent } from '../shared/page-header/page-header';
 import { UsersService } from '../../services/users.service';
 import { AuthService } from '../../services/auth.service';
 import { JobRolesService, JobRole } from '../../services/job-roles.service';
 
 @Component({
-  selector: 'app-admin-panel',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+    selector: 'app-admin-panel',
+    standalone: true,
+    imports: [CommonModule, FormsModule, RouterModule, PageHeaderComponent],
   templateUrl: './admin-panel.html',
   styleUrl: './admin-panel.css',
 })
@@ -31,6 +32,7 @@ export class AdminPanelComponent implements OnInit {
   selectedManagerId: number | null = null;
   editingUser: any = null;
   editUserData: any = { realName: '', email: '', username: '', role: '' };
+  deletingUser: any = null;
 
   newRoleName: string = '';
   roles: JobRole[] = [];
@@ -154,12 +156,28 @@ export class AdminPanelComponent implements OnInit {
     this.editUserData = { realName: '', email: '', username: '', role: '' };
   }
 
-  deleteUser(user: any) {
-    if (confirm(`Are you sure you want to delete user "${user.realName}"? This action cannot be undone.`)) {
-      this.usersService.deleteUser(user.id).subscribe(() => {
-        this.loadUsers();
+  startDeleteUser(user: any) {
+    this.deletingUser = user;
+  }
+
+  confirmDeleteUser() {
+    if (this.deletingUser) {
+      this.usersService.deleteUser(this.deletingUser.id).subscribe({
+        next: () => {
+          this.deletingUser = null;
+          this.loadUsers();
+        },
+        error: (err) => {
+          console.error('Error deleting user:', err);
+          alert('Failed to delete user: ' + (err.error?.message || err.message));
+          this.deletingUser = null;
+        }
       });
     }
+  }
+
+  cancelDeleteUser() {
+    this.deletingUser = null;
   }
 
   logout() {

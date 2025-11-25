@@ -1,11 +1,5 @@
 <div class="manager-rating-container">
-    <header>
-        <h2>Rate Team Members</h2>
-        <div class="header-actions">
-            <button routerLink="/dashboard" class="back-btn">← Dashboard</button>
-            <button (click)="logout()" class="logout-btn">Logout</button>
-        </div>
-    </header>
+    <app-page-header [title]="'Rate Team Members'"></app-page-header>
 
     <p *ngIf="!employees || employees.length === 0" class="no-data-message">
         No team members to rate yet. Employees need to complete their self-assessments first.

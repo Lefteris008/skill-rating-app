@@ -31,7 +31,7 @@ export class User {
     })
     role: UserRole;
 
-    @ManyToOne(() => User, (user) => user.subordinates, { nullable: true })
+    @ManyToOne(() => User, (user) => user.subordinates, { nullable: true, onDelete: 'SET NULL' })
     manager: User;
 
     @OneToMany(() => User, (user) => user.manager)

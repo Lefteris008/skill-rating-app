@@ -2,6 +2,7 @@ import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { SkillHeatmapComponent } from '../skill-heatmap/skill-heatmap';
+import { PageHeaderComponent } from '../shared/page-header/page-header';
 import { UsersService } from '../../services/users.service';
 import { RatingsService } from '../../services/ratings.service';
 import { AuthService } from '../../services/auth.service';
@@ -10,7 +11,7 @@ import { forkJoin } from 'rxjs';
 @Component({
   selector: 'app-employee-rating',
   standalone: true,
-  imports: [CommonModule, RouterModule, SkillHeatmapComponent],
+  imports: [CommonModule, RouterModule, SkillHeatmapComponent, PageHeaderComponent],
   templateUrl: './employee-rating.html',
   styleUrl: './employee-rating.css',
 })
@@ -27,6 +28,7 @@ export class EmployeeRatingComponent implements OnInit {
   employeeName: string = '';
   managerName: string = '';
   isSubmitting: boolean = false;
+  showSubmitConfirmation = false;
 
   ngOnInit() {
     this.employeeId = Number(this.route.snapshot.paramMap.get('id'));
@@ -43,7 +45,34 @@ export class EmployeeRatingComponent implements OnInit {
     });
   }
 
-  submitRatings() {
+  openSubmitConfirmation() {
+    if (this.isSubmitting) return;
+    this.showSubmitConfirmation = true;
+  }
+
+  cancelSubmitConfirmation(event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    if (this.isSubmitting) return;
+    this.showSubmitConfirmation = false;
+  }
+
+  confirmSubmitRatings(event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    if (this.isSubmitting) return;
+    this.showSubmitConfirmation = false;
+    this.submitRatings();
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  private submitRatings() {
     if (!this.heatmapComponent || this.isSubmitting) return;
 
     this.isSubmitting = true;

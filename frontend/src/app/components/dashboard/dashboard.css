@@ -4,25 +4,19 @@
     margin: 0 auto;
 }
 
-.dashboard-header {
+header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
     padding-bottom: 20px;
     border-bottom: 1px solid #eee;
 }
 
-h1 {
-    font-size: 2.5rem;
+h2 {
+    font-size: 2rem;
     color: #333;
     margin: 0;
-}
-
-.welcome-text {
-    color: #666;
-    margin-top: 5px;
-    font-size: 1.1rem;
 }
 
 h3 {
@@ -71,4 +65,93 @@ main>div {
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.self-rating-panel {
+    margin-top: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 20px;
+    background: #fafafa;
+}
+
+.self-rating-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    align-items: center;
+    gap: 12px;
+}
+
+.submit-self-rating {
+    background-color: #28a745;
+}
+
+.submit-self-rating:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 1000;
+}
+
+.modal {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    width: min(420px, 100%);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    animation: fadeInScale 0.2s ease;
+}
+
+.modal h4 {
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+
+.modal p {
+    margin-bottom: 20px;
+    color: #444;
+    line-height: 1.4;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.self-rating-error {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+.cancel-btn {
+    background: #dc3545;
+}
+
+.proceed-btn {
+    background: #0d6efd;
 }

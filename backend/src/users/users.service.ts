@@ -30,7 +30,7 @@ export class UsersService {
     }
 
     async findAll(): Promise<User[]> {
-        return this.usersRepository.find({ relations: ['manager'] });
+        return this.usersRepository.find({ relations: ['manager', 'currentRole', 'targetRole'] });
     }
 
     async assignManager(userId: number, managerId: number | null): Promise<User> {
@@ -76,10 +76,22 @@ export class UsersService {
     }
 
     async delete(userId: number): Promise<void> {
-        const user = await this.usersRepository.findOne({ where: { id: userId } });
+        // First, unassign this user as manager from all subordinates
+        await this.usersRepository
+            .createQueryBuilder()
+            .update(User)
+            .set({ manager: null as any })
+            .where('managerId = :userId', { userId })
+            .execute();
+
+        // Then delete the user (ratings will cascade delete automatically)
+        const user = await this.usersRepository.findOne({ 
+            where: { id: userId }
+        });
         if (!user) {
             throw new Error('User not found');
         }
+
         await this.usersRepository.remove(user);
     }
 

@@ -1,11 +1,5 @@
 <div class="dashboard-container">
-    <header class="dashboard-header">
-        <div>
-            <h1>Dashboard</h1>
-            <p *ngIf="user" class="welcome-text">Welcome, {{ user.realName }}</p>
-        </div>
-        <button *ngIf="user" (click)="logout()" class="logout-btn">Logout</button>
-    </header>
+    <app-page-header [title]="'Dashboard'" [backLink]="null"></app-page-header>
 
     <main>
         <div *ngIf="user?.role === 'admin'">
@@ -22,7 +16,31 @@
 
         <div *ngIf="user?.role === 'employee'">
             <h3>Employee Actions</h3>
-            <app-skill-heatmap></app-skill-heatmap>
+            <p>Kick off or continue your self-assessment below.</p>
+            <button (click)="handleSelfAssessmentAction()">
+                {{ hasCompletedSelfAssessment ? 'View My Results' : (showSelfRating ? 'Hide Self Assessment' : 'Start Self Assessment') }}
+            </button>
+            <div *ngIf="showSelfRating" class="self-rating-panel">
+                <app-skill-heatmap [showValues]="false"></app-skill-heatmap>
+                <div class="self-rating-actions">
+                    <span class="self-rating-error" *ngIf="selfAssessmentError">{{ selfAssessmentError }}</span>
+                    <button class="submit-self-rating" (click)="openSubmitConfirmation()" [disabled]="isSubmitting">
+                        {{ isSubmitting ? 'Submitting...' : 'Submit Self Assessment' }}
+                    </button>
+                </div>
+            </div>
         </div>
+
     </main>
-</div>
+
+        <div class="modal-overlay" *ngIf="showSubmitConfirmation" (click)="cancelSubmitConfirmation()">
+            <div class="modal confirmation-modal" (click)="$event.stopPropagation()">
+                <h4>Confirm Submission</h4>
+                <p>You are about to submit your ratings, after which point you won't be able to modify them. Please
+                    make sure that you have correctly moved the sliders to the indicative positions.</p>
+                <div class="modal-actions">
+                    <button class="cancel-btn" (click)="cancelSubmitConfirmation()">Cancel</button>
+                    <button class="proceed-btn" (click)="confirmSubmitSelfAssessment()">Proceed</button>
+                </div>
+            </div>
+        </div>

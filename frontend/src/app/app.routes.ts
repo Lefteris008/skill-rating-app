@@ -17,6 +17,6 @@ export const routes: Routes = [
     { path: 'skills-management', component: SkillsManagementComponent, canActivate: [AuthGuard] },
     { path: 'manager-rating', component: ManagerRatingComponent, canActivate: [AuthGuard] },
     { path: 'team-roles', component: TeamRolesComponent, canActivate: [AuthGuard] },
-    { path: 'employee-rating/:id', component: EmployeeRatingComponent },
-    { path: 'rating-results/:id', component: RatingResultsComponent },
+    { path: 'employee-rating/:id', component: EmployeeRatingComponent, canActivate: [AuthGuard] },
+    { path: 'rating-results/:id', component: RatingResultsComponent, canActivate: [AuthGuard] },
 ];

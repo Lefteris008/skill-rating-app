@@ -1,8 +1,5 @@
 <div class="team-roles-container">
-    <header>
-        <h2>Manage Team Roles</h2>
-        <button routerLink="/dashboard" class="back-btn">← Dashboard</button>
-    </header>
+    <app-page-header [title]="'Manage Team Roles'"></app-page-header>
 
     <div class="employee-list">
         <div class="employee-card" *ngFor="let employee of employees">
@@ -15,14 +12,14 @@
                     <label>Current Role:</label>
                     <select [(ngModel)]="employee.currentRoleId" (change)="updateRoles(employee)">
                         <option [ngValue]="null">Select Role</option>
-                        <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
+                        <option *ngFor="let role of roles" [ngValue]="role.id">{{ role.name }}</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Target Role:</label>
                     <select [(ngModel)]="employee.targetRoleId" (change)="updateRoles(employee)">
                         <option [ngValue]="null">Select Role</option>
-                        <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
+                        <option *ngFor="let role of roles" [ngValue]="role.id">{{ role.name }}</option>
                     </select>
                 </div>
             </div>

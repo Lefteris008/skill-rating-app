@@ -20,11 +20,13 @@ export class SkillHeatmapComponent implements OnInit {
   @Input() readOnly = false;
   @Input() employeeName: string = ''; // Name to show on employee rating marker
   @Input() isManagerView: boolean = false; // If true, don't auto-save
+  @Input() showValues = true; // Hide numeric labels for employee self view
 
   skills: any[] = [];
   ratings: any[] = []; // Current ratings being viewed/edited
   employeeSelfRatings: any[] = []; // Employee's original self-ratings (for reference)
   managerRatings: Map<number, number> = new Map(); // Local manager ratings before submit
+  selfRatings: Map<number, number> = new Map(); // Local employee ratings before submit
   user: any = null;
 
   ngOnInit() {
@@ -39,28 +41,44 @@ export class SkillHeatmapComponent implements OnInit {
   loadData() {
     this.skillsService.getSkills().subscribe(skills => {
       this.skills = skills;
+      if (!this.isManagerView) {
+        skills.forEach(skill => {
+          if (!this.selfRatings.has(skill.id)) {
+            this.selfRatings.set(skill.id, 0);
+          }
+        });
+      }
     });
 
     if (this.userId) {
       this.ratingsService.getRatings(this.userId).subscribe(ratings => {
-        console.log('All ratings for user:', ratings);
-        console.log('Employee name:', this.employeeName);
-
         // If viewing as manager (employeeName is set), save employee self-ratings first
         if (this.employeeName && this.employeeSelfRatings.length === 0) {
           this.employeeSelfRatings = ratings.filter(r => r.selfRating && r.selfRating > 0);
-          console.log('Employee self-ratings:', this.employeeSelfRatings);
         }
         this.ratings = ratings;
+
+        if (!this.isManagerView) {
+          ratings.forEach(rating => {
+            this.selfRatings.set(rating.skillId, rating.selfRating || 0);
+          });
+        }
       });
     }
   }
 
   getRating(skillId: number): number {
-    // If manager view, return local rating if set
-    if (this.isManagerView && this.managerRatings.has(skillId)) {
-      return this.managerRatings.get(skillId)!;
+    if (this.isManagerView) {
+      if (this.managerRatings.has(skillId)) {
+        return this.managerRatings.get(skillId)!;
+      }
+      return 0;
     }
+
+    if (this.selfRatings.has(skillId)) {
+      return this.selfRatings.get(skillId)!;
+    }
+
     const rating = this.ratings.find(r => r.skillId === skillId);
     return rating?.selfRating || 0;
   }
@@ -82,27 +100,36 @@ export class SkillHeatmapComponent implements OnInit {
       return;
     }
 
-    // Update local ratings immediately for responsive UI (employee self-rating)
+    this.selfRatings.set(skillId, value);
+
     const existingRating = this.ratings.find(r => r.skillId === skillId);
     if (existingRating) {
       existingRating.selfRating = value;
     } else {
       this.ratings.push({ skillId, selfRating: value, userId: this.userId, managerRating: 0, targetRating: 0 });
     }
-
-    const rating = {
-      skillId,
-      userId: this.userId,
-      value,
-      raterId: this.user.sub
-    };
-
-    this.ratingsService.saveRating(rating).subscribe(() => {
-      // Rating saved to backend successfully
-    });
   }
 
   getManagerRatings(): Map<number, number> {
     return this.managerRatings;
+  }
+
+  getSelfAssessmentPayload(): { skillId: number; value: number }[] {
+    if (this.readOnly || this.isManagerView) {
+      return [];
+    }
+
+    if (this.skills.length === 0 && this.selfRatings.size > 0) {
+      return Array.from(this.selfRatings.entries())
+        .filter(([, value]) => value > 0)
+        .map(([skillId, value]) => ({ skillId, value }));
+    }
+
+    return this.skills
+      .map(skill => ({
+        skillId: skill.id,
+        value: this.selfRatings.get(skill.id) ?? 0,
+      }))
+      .filter(entry => entry.value > 0);
   }
 }

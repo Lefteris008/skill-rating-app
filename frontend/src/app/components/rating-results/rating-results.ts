@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { PageHeaderComponent } from '../shared/page-header/page-header';
 import { SkillsService } from '../../services/skills.service';
 import { RatingsService } from '../../services/ratings.service';
 import { UsersService } from '../../services/users.service';
@@ -9,12 +10,13 @@ import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-rating-results',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, PageHeaderComponent],
   templateUrl: './rating-results.html',
   styleUrl: './rating-results.css',
 })
 export class RatingResultsComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private skillsService = inject(SkillsService);
   private ratingsService = inject(RatingsService);
   private usersService = inject(UsersService);
@@ -25,11 +27,25 @@ export class RatingResultsComponent implements OnInit {
   managerName: string = '';
   skills: any[] = [];
   ratings: any = {};
+  isEmployeeView = false;
+  hasManagerRatings = false;
+  showManagerPendingMessage = false;
+  backLink: string = '/dashboard';
+  backLabel: string = '← Dashboard';
 
   ngOnInit() {
     this.employeeId = Number(this.route.snapshot.paramMap.get('id'));
     const currentUser = this.authService.getUser();
     this.managerName = currentUser?.username || 'Manager';
+    this.isEmployeeView = currentUser?.role === 'employee';
+
+    if (currentUser?.role === 'manager') {
+      this.backLink = '/manager-rating';
+      this.backLabel = '← Back to List';
+    } else {
+      this.backLink = '/dashboard';
+      this.backLabel = '← Dashboard';
+    }
 
     this.loadData();
   }
@@ -40,6 +56,10 @@ export class RatingResultsComponent implements OnInit {
       const employee = users.find(u => u.id === this.employeeId);
       if (employee) {
         this.employeeName = employee.username;
+        // Get the manager's name from the employee's manager relationship
+        if (employee.manager) {
+          this.managerName = employee.manager.username;
+        }
       }
     });
 
@@ -61,6 +81,7 @@ export class RatingResultsComponent implements OnInit {
           };
         });
         console.log('Processed ratings:', this.ratings);
+        this.evaluateManagerRatings(ratings);
       });
     }
   }
@@ -111,5 +132,15 @@ export class RatingResultsComponent implements OnInit {
     }
 
     return TOP_POS;
+  }
+
+  private evaluateManagerRatings(ratings: any[]) {
+    this.hasManagerRatings = ratings.some((rating: any) => rating.managerRating && rating.managerRating > 0);
+    this.showManagerPendingMessage = this.isEmployeeView && !this.hasManagerRatings;
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }
