@@ -64,7 +64,7 @@ export class RatingResultsComponent implements OnInit {
     });
 
     // Load skills
-    this.skillsService.getSkills().subscribe(skills => {
+    this.skillsService.getSkills(undefined, this.employeeId || undefined).subscribe(skills => {
       this.skills = skills;
     });
 
