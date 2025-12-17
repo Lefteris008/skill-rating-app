@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, Input } from '@angular/core';
+import { Component, inject, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SkillsService } from '../../services/skills.service';
 import { RatingsService } from '../../services/ratings.service';
@@ -11,7 +11,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './skill-heatmap.html',
   styleUrl: './skill-heatmap.css',
 })
-export class SkillHeatmapComponent implements OnInit {
+export class SkillHeatmapComponent implements OnInit, OnChanges {
   private skillsService = inject(SkillsService);
   private ratingsService = inject(RatingsService);
   private authService = inject(AuthService);
@@ -31,15 +31,23 @@ export class SkillHeatmapComponent implements OnInit {
 
   ngOnInit() {
     this.user = this.authService.getUser();
-    if (!this.userId && this.user) {
+    // Only default to current user if NOT in manager view
+    if (!this.userId && this.user && !this.isManagerView) {
       this.userId = this.user.sub;
+      this.loadData();
     }
+  }
 
-    this.loadData();
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['userId']) {
+      if (this.userId) {
+        this.loadData();
+      }
+    }
   }
 
   loadData() {
-    this.skillsService.getSkills().subscribe(skills => {
+    this.skillsService.getSkills(undefined, this.userId || undefined).subscribe(skills => {
       this.skills = skills;
       if (!this.isManagerView) {
         skills.forEach(skill => {

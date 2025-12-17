@@ -21,12 +21,18 @@ export class SkillsController {
     }
 
     @Get()
-    async findAll(@Request() req, @Query('jobRoleId') jobRoleId?: string) {
-        // If user is manager and jobRoleId is provided, filter by it
-        if (req.user.role === UserRole.MANAGER && jobRoleId) {
+    async findAll(@Request() req, @Query('jobRoleId') jobRoleId?: string, @Query('userId') userId?: string) {
+        // If a userId is provided and the requester is a manager/admin, use that userId
+        // Otherwise default to the requester's userId
+        const targetUserId = (userId && (req.user.role === UserRole.MANAGER || req.user.role === UserRole.ADMIN))
+            ? +userId
+            : req.user.userId;
+
+        // If user is manager and jobRoleId is provided (and they are looking at their own skills), filter by it
+        if (req.user.role === UserRole.MANAGER && jobRoleId && targetUserId === req.user.userId) {
             return this.skillsService.findAllForManager(req.user.userId, +jobRoleId);
         }
-        return this.skillsService.findAllForUser(req.user.userId);
+        return this.skillsService.findAllForUser(targetUserId);
     }
 
     @Get(':id')

@@ -8,10 +8,13 @@ export class SkillsService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:3000/skills';
 
-  getSkills(jobRoleId?: string) {
-    let params = {};
+  getSkills(jobRoleId?: string, userId?: number) {
+    let params: any = {};
     if (jobRoleId) {
-      params = { jobRoleId };
+      params.jobRoleId = jobRoleId;
+    }
+    if (userId) {
+      params.userId = userId.toString();
     }
     return this.http.get<any[]>(this.apiUrl, { params });
   }
