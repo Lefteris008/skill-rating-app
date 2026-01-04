@@ -75,11 +75,14 @@ export class SkillHeatmapComponent implements OnInit, OnChanges {
     }
   }
 
+  ratingSteps = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+
   getRating(skillId: number): number {
     if (this.isManagerView) {
       if (this.managerRatings.has(skillId)) {
         return this.managerRatings.get(skillId)!;
       }
+      // Return 0 if no rating yet
       return 0;
     }
 
@@ -97,10 +100,8 @@ export class SkillHeatmapComponent implements OnInit, OnChanges {
     return rating?.selfRating || 0;
   }
 
-  onSliderChange(skillId: number, event: any) {
+  setRating(skillId: number, value: number) {
     if (this.readOnly) return;
-
-    const value = parseInt(event.target.value, 10);
 
     // If manager view, just store locally
     if (this.isManagerView) {
@@ -117,6 +118,9 @@ export class SkillHeatmapComponent implements OnInit, OnChanges {
       this.ratings.push({ skillId, selfRating: value, userId: this.userId, managerRating: 0, targetRating: 0 });
     }
   }
+
+  // Remove onSliderChange as it is no longer used
+  // onSliderChange(skillId: number, event: any) { ... }
 
   getManagerRatings(): Map<number, number> {
     return this.managerRatings;

@@ -10,7 +10,7 @@ export class SkillsService {
 
   getSkills(jobRoleId?: string, userId?: number) {
     let params: any = {};
-    if (jobRoleId) {
+    if (jobRoleId !== undefined) {
       params.jobRoleId = jobRoleId;
     }
     if (userId) {

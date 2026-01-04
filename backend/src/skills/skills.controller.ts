@@ -22,17 +22,30 @@ export class SkillsController {
 
     @Get()
     async findAll(@Request() req, @Query('jobRoleId') jobRoleId?: string, @Query('userId') userId?: string) {
-        // If a userId is provided and the requester is a manager/admin, use that userId
-        // Otherwise default to the requester's userId
-        const targetUserId = (userId && (req.user.role === UserRole.MANAGER || req.user.role === UserRole.ADMIN))
+        const currentUserId = +req.user.userId;
+        const targetUserId = (userId && (req.user.role === UserRole.MANAGER || req.user.role === 'manager' || req.user.role === UserRole.ADMIN))
             ? +userId
-            : req.user.userId;
+            : currentUserId;
 
-        // If user is manager and jobRoleId is provided (and they are looking at their own skills), filter by it
-        if (req.user.role === UserRole.MANAGER && jobRoleId && targetUserId === req.user.userId) {
-            return this.skillsService.findAllForManager(req.user.userId, +jobRoleId);
+        console.log(`findAll: requester=${currentUserId} role=${req.user.role} jobRoleId=${jobRoleId} targetUserId=${targetUserId}`);
+
+        // If user is manager and jobRoleId is provided, filter by it
+        // We relax the targetUserId check: if I am a manager and I ask for jobRoleId, I probably mean *my* skills filtered by role (since creating skills is a manager task).
+        // Or if I am looking at another user but filtering by role... that's less common for this specific 'manage skills' view.
+        // The 'Manage Skills' view definitely hits this with NO userId param. So targetUserId == currentUserId.
+
+        const isManager = req.user.role === UserRole.MANAGER || req.user.role === 'manager';
+
+        // Use loose equality or explicit cast for safety
+        if (isManager && jobRoleId !== undefined && targetUserId === currentUserId) {
+            console.log('Fulfilling manager request with explicit role filter');
+            const parsedRoleId = jobRoleId === 'null' ? null : +jobRoleId;
+            return this.skillsService.findAllForManager(currentUserId, parsedRoleId);
         }
-        return this.skillsService.findAllForUser(targetUserId);
+
+        console.log('Falling back to default user lookup');
+        const parsedRoleId = jobRoleId === 'null' ? null : (jobRoleId !== undefined ? +jobRoleId : undefined);
+        return this.skillsService.findAllForUser(targetUserId, parsedRoleId);
     }
 
     @Get(':id')

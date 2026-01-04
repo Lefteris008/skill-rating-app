@@ -3,22 +3,24 @@
     <div class="skills-list">
         <div *ngFor="let skill of skills" class="skill-row">
             <div class="skill-header">
-                <span class="skill-name">{{ skill.name }}</span>
-                    <span class="skill-value" *ngIf="showValues">{{ getRating(skill.id) }}</span>
+                <div class="skill-info">
+                    <span class="skill-name">{{ skill.name }}</span>
+                    <div class="skill-description" *ngIf="skill.description">{{ skill.description }}</div>
+                </div>
+                <span class="skill-value" *ngIf="showValues">{{ getRating(skill.id) }}</span>
             </div>
-            <div class="slider-wrapper">
-                <input type="range" min="0" max="100" [value]="getRating(skill.id)"
-                    (input)="onSliderChange(skill.id, $event)" [disabled]="readOnly" class="skill-slider" />
-                <div *ngIf="skill.targetLevel && isManagerView" class="target-marker"
+            <div class="rating-boxes">
+                <div *ngFor="let step of ratingSteps; let i = index" class="rating-box"
+                    [class.active]="getRating(skill.id) >= step" [class.filled]="getRating(skill.id) >= step"
+                    (click)="setRating(skill.id, step)" [style.backgroundPositionX.%]="(i * 100 / 9)"
+                    [attr.title]="step + '/100'">
+                </div>
+
+                <div *ngIf="skill.targetLevel && isManagerView" class="target-marker-box"
                     [style.left.%]="skill.targetLevel">
                     <div class="target-line"></div>
                     <div class="target-label">Target</div>
                 </div>
-                <!-- <div *ngIf="employeeName && getEmployeeSelfRating(skill.id) > 0" class="employee-marker"
-                    [style.left.%]="getEmployeeSelfRating(skill.id)">
-                    <div class="employee-line"></div>
-                    <div class="employee-label">{{ employeeName }} - {{ getEmployeeSelfRating(skill.id) }}</div>
-                </div> -->
             </div>
         </div>
     </div>

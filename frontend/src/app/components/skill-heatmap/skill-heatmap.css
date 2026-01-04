@@ -24,11 +24,24 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 25px;
+    /* Added spacing for target marker to not overlap description */
+}
+
+.skill-info {
+    display: flex;
+    flex-direction: column;
 }
 
 .skill-name {
     font-weight: 600;
     font-size: 16px;
+}
+
+.skill-description {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 2px;
 }
 
 .skill-value {
@@ -39,84 +52,63 @@
     text-align: right;
 }
 
-.slider-wrapper {
-    position: relative;
-    height: 30px;
+.rating-boxes {
     display: flex;
-    align-items: center;
-}
-
-.skill-slider {
+    gap: 2px;
+    height: 40px;
+    position: relative;
     width: 100%;
-    height: 16px;
-    border-radius: 8px;
-    outline: none;
-    -webkit-appearance: none;
-    appearance: none;
-    background: linear-gradient(to right,
+}
+
+.rating-box {
+    flex: 1;
+    background-color: #e0e0e0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid #ccc;
+    /* Removed border-radius as requested */
+}
+
+.rating-box:hover {
+    transform: scale(1.05);
+    z-index: 10;
+    border-color: #999;
+}
+
+/* Gradient background for active boxes */
+.rating-box.active {
+    background-image: linear-gradient(to right,
             #00bcd4 0%,
-            #4caf50 25%,
-            #ffeb3b 50%,
-            #ff9800 75%,
-            #f44336 100%);
-    cursor: pointer;
-    position: relative;
-    z-index: 1;
+            #26c6da 12.5%,
+            #4db6ac 25%,
+            #81c784 37.5%,
+            #aed581 50%,
+            #dce775 62.5%,
+            #fff176 75%,
+            #ffb74d 87.5%,
+            #ff8a65 95%,
+            #e57373 100%);
+    background-size: 1000% 100%;
+    /* border-color will be set dynamically or kept neutral? 
+       Let's keep neutral or use transparent border to let color shine?
+       Keeping light grey border for structure. */
+    border-color: rgba(0, 0, 0, 0.1);
 }
 
-.skill-slider:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-.skill-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: white;
-    border: 3px solid #333;
-    cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    position: relative;
-    z-index: 3;
-}
-
-.skill-slider::-moz-range-thumb {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: white;
-    border: 3px solid #333;
-    cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    position: relative;
-    z-index: 3;
-}
-
-.skill-slider:disabled::-webkit-slider-thumb {
-    cursor: not-allowed;
-}
-
-.skill-slider:disabled::-moz-range-thumb {
-    cursor: not-allowed;
-}
-
-.target-marker {
+.target-marker-box {
     position: absolute;
     top: -5px;
     bottom: -5px;
-    transform: translateX(-50%);
     pointer-events: none;
-    z-index: 2;
+    z-index: 20;
+    transform: translateX(-50%);
 }
 
 .target-line {
     width: 4px;
     height: 100%;
-    background: #FF5722;
-    box-shadow: 0 0 6px rgba(255, 87, 34, 0.8);
+    background: #000;
+    border: 1px solid white;
     margin: 0 auto;
 }
 
@@ -125,39 +117,7 @@
     top: -25px;
     left: 50%;
     transform: translateX(-50%);
-    background: #FF5722;
-    color: white;
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 11px;
-    font-weight: bold;
-    white-space: nowrap;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.employee-marker {
-    position: absolute;
-    top: -5px;
-    bottom: -5px;
-    transform: translateX(-50%);
-    pointer-events: none;
-    z-index: 2;
-}
-
-.employee-line {
-    width: 4px;
-    height: 100%;
-    background: #2196F3;
-    box-shadow: 0 0 6px rgba(33, 150, 243, 0.8);
-    margin: 0 auto;
-}
-
-.employee-label {
-    position: absolute;
-    bottom: -25px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #2196F3;
+    background: #333;
     color: white;
     padding: 3px 8px;
     border-radius: 4px;

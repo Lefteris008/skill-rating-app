@@ -5,7 +5,7 @@
         <div class="role-selector">
             <label>Select Job Role to Manage Skills:</label>
             <select [(ngModel)]="selectedRoleId" (change)="onRoleChange()">
-                <option [ngValue]="null">General Skills (All Roles)</option>
+                <!-- <option [ngValue]="null">General Skills (All Roles)</option> Removed as per user request -->
                 <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
             </select>
         </div>
@@ -15,9 +15,10 @@
         <div class="add-form">
             <div class="skill-input-group">
                 <input [(ngModel)]="newSkillName" placeholder="New Skill Name" (keydown.enter)="addSkill()" />
+                <input [(ngModel)]="newSkillDescription" placeholder="Description (optional)" />
                 <div class="slider-container">
                     <label>Target Level: {{ newSkillTarget }}</label>
-                    <input type="range" min="0" max="100" [(ngModel)]="newSkillTarget" class="slider" />
+                    <input type="range" min="0" max="100" step="10" [(ngModel)]="newSkillTarget" class="slider" />
                 </div>
             </div>
             <button (click)="addSkill()">Add Skill</button>
@@ -27,6 +28,7 @@
             <li *ngFor="let skill of skills">
                 <div class="skill-info">
                     <span class="skill-name">{{ skill.name }}</span>
+                    <span class="skill-description" *ngIf="skill.description">{{ skill.description }}</span>
                     <span class="skill-target">Target: {{ skill.targetLevel || 0 }}</span>
                 </div>
                 <div class="actions">
@@ -42,9 +44,10 @@
         <div class="modal" (click)="$event.stopPropagation()">
             <h3>Edit Skill</h3>
             <input [(ngModel)]="editSkillName" (keydown.enter)="saveEdit()" autofocus placeholder="Skill Name" />
+            <textarea [(ngModel)]="editSkillDescription" placeholder="Description (optional)" rows="3"></textarea>
             <div class="slider-container">
                 <label>Target Level: {{ editSkillTarget }}</label>
-                <input type="range" min="0" max="100" [(ngModel)]="editSkillTarget" class="slider" />
+                <input type="range" min="0" max="100" step="10" [(ngModel)]="editSkillTarget" class="slider" />
             </div>
             <div class="modal-actions">
                 <button (click)="saveEdit()">Save</button>

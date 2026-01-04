@@ -125,9 +125,24 @@ header h2 {
     font-size: 16px;
 }
 
+.skill-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.skill-description {
+    font-size: 14px;
+    color: #666;
+    font-style: italic;
+    max-width: 800px;
+}
+
 .slider-wrapper {
     position: relative;
     height: 50px;
+    margin-top: 60px;
+    /* Increased margin to accommodate Super Top labels */
     display: flex;
     align-items: center;
 }

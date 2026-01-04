@@ -21,4 +21,7 @@ export class Skill {
 
     @ManyToOne(() => JobRole, { nullable: true })
     jobRole: JobRole;
+
+    @Column({ nullable: true })
+    jobRoleId: number;
 }

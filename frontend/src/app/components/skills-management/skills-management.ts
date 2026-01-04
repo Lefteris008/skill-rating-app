@@ -25,24 +25,30 @@ export class SkillsManagementComponent implements OnInit {
     selectedRoleId: number | null = null;
 
     newSkillName = '';
+    newSkillDescription = '';
     newSkillTarget = 50;
     editingSkill: any = null;
     editSkillName = '';
+    editSkillDescription = '';
     editSkillTarget = 50;
 
     ngOnInit() {
         this.loadRoles();
-        this.loadSkills();
+        // this.loadSkills(); // Loaded after roles are fetched
     }
 
     loadRoles() {
         this.jobRolesService.getRoles().subscribe(roles => {
             this.roles = roles;
+            if (this.roles.length > 0) {
+                this.selectedRoleId = this.roles[0].id;
+                this.loadSkills();
+            }
         });
     }
 
     loadSkills() {
-        this.skillsService.getSkills(this.selectedRoleId ? this.selectedRoleId.toString() : undefined)
+        this.skillsService.getSkills(this.selectedRoleId ? this.selectedRoleId.toString() : 'null')
             .subscribe(skills => this.skills = skills);
     }
 
@@ -53,10 +59,15 @@ export class SkillsManagementComponent implements OnInit {
     addSkill() {
         if (this.newSkillName) {
             this.skillsService.createSkill(
-                { name: this.newSkillName, targetLevel: this.newSkillTarget },
+                {
+                    name: this.newSkillName,
+                    description: this.newSkillDescription,
+                    targetLevel: this.newSkillTarget
+                },
                 this.selectedRoleId || undefined
             ).subscribe(() => {
                 this.newSkillName = '';
+                this.newSkillDescription = '';
                 this.newSkillTarget = 50;
                 this.loadSkills();
             });
@@ -72,14 +83,20 @@ export class SkillsManagementComponent implements OnInit {
     startEdit(skill: any) {
         this.editingSkill = skill;
         this.editSkillName = skill.name;
+        this.editSkillDescription = skill.description || '';
         this.editSkillTarget = skill.targetLevel || 50;
     }
 
     saveEdit() {
         if (this.editingSkill && this.editSkillName) {
-            this.skillsService.updateSkill(this.editingSkill.id, { name: this.editSkillName, targetLevel: this.editSkillTarget }).subscribe(() => {
+            this.skillsService.updateSkill(this.editingSkill.id, {
+                name: this.editSkillName,
+                description: this.editSkillDescription,
+                targetLevel: this.editSkillTarget
+            }).subscribe(() => {
                 this.editingSkill = null;
                 this.editSkillName = '';
+                this.editSkillDescription = '';
                 this.editSkillTarget = 50;
                 this.loadSkills();
             });
@@ -89,6 +106,7 @@ export class SkillsManagementComponent implements OnInit {
     cancelEdit() {
         this.editingSkill = null;
         this.editSkillName = '';
+        this.editSkillDescription = '';
         this.editSkillTarget = 50;
     }
 

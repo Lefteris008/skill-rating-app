@@ -91,43 +91,46 @@ export class RatingResultsComponent implements OnInit {
   }
 
   // Compute top position for labels
-  getLabelTop(skillId: number, type: 'target' | 'employee' | 'manager'): string {
-    const ratings = this.getRatingsForSkill(skillId);
-    const target = ratings.target || 0;
+  getLabelTop(skill: any, type: 'target' | 'employee' | 'manager'): string {
+    const ratings = this.getRatingsForSkill(skill.id);
+    const target = skill.targetLevel || 0; // Use true target level from skill
     const employee = ratings.employeeRating || 0;
     const manager = ratings.managerRating || 0;
 
     // Base positions
     const TOP_POS = '-28px';
     const BOTTOM_POS = '55px'; // Below the 50px slider
-    const STACK_TOP_POS = '-52px'; // Stacked above TOP
+    const STACK_TOP_POS = '-52px'; // Stacked above TOP (Manager)
 
-    if (type === 'target') return TOP_POS;
+    // Employee always on BOTTOM
     if (type === 'employee') return BOTTOM_POS;
 
-    if (type === 'manager') {
-      // Check collision with Target (Top)
-      const closeToTarget = Math.abs(manager - target) < 12;
+    // Manager always on TOP (unless colliding, but requirement says Manager is Top)
+    if (type === 'manager') return TOP_POS;
 
-      // Check collision with Employee (Bottom)
-      const closeToEmployee = Math.abs(manager - employee) < 12;
+    if (type === 'target') {
+      // Check collision with Manager
+      const closeToManager = Math.abs(manager - target) < 12;
 
-      if (closeToTarget && closeToEmployee) {
-        // 3-way collision: Stack above Target
+      // Check collision with Employee
+      const closeToEmployee = Math.abs(employee - target) < 12;
+
+      // 3-way collision: Manager TOP, Employee BOTTOM, Target SUPER TOP
+      if (closeToManager && closeToEmployee) {
         return STACK_TOP_POS;
       }
 
-      if (closeToTarget) {
-        // Avoid Target -> Go Bottom
+      // Collision with Manager: Manager TOP, Target BOTTOM
+      if (closeToManager) {
         return BOTTOM_POS;
       }
 
+      // Collision with Employee: Employee BOTTOM, Target TOP
       if (closeToEmployee) {
-        // Avoid Employee -> Go Top (Default)
         return TOP_POS;
       }
 
-      // Default to Top
+      // No collision: Default TOP
       return TOP_POS;
     }
 

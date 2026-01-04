@@ -22,7 +22,7 @@ export class SkillsService {
         return this.skillsRepository.save(newSkill);
     }
 
-    async findAllForUser(userId: number): Promise<Skill[]> {
+    async findAllForUser(userId: number, jobRoleId?: number | null): Promise<Skill[]> {
         // First, get the user to check their role and manager
         const user = await this.usersRepository.findOne({
             where: { id: userId },
@@ -46,18 +46,28 @@ export class SkillsService {
         }
 
         // If user is a manager, get their own skills
-        return this.findAllForManager(userId);
+        return this.findAllForManager(userId, jobRoleId);
     }
 
-    async findAllForManager(managerId: number, jobRoleId?: number): Promise<Skill[]> {
-        const where: any = { manager: { id: managerId } };
-        if (jobRoleId) {
-            where.jobRole = { id: jobRoleId };
+    async findAllForManager(managerId: number, jobRoleId?: number | null): Promise<Skill[]> {
+        console.log(`findAllForManager: managerId=${managerId} jobRoleId=${jobRoleId}`);
+        const query = this.skillsRepository.createQueryBuilder('skill')
+            .leftJoinAndSelect('skill.manager', 'manager')
+            .leftJoinAndSelect('skill.jobRole', 'jobRole')
+            .where('manager.id = :managerId', { managerId });
+
+        if (jobRoleId !== undefined) {
+            if (jobRoleId === null) {
+                console.log('Filtering for NO role (General Skills)');
+                // Check using the explicit column on the entity
+                query.andWhere('skill.jobRoleId IS NULL');
+            } else {
+                console.log(`Filtering for role ${jobRoleId}`);
+                query.andWhere('jobRole.id = :jobRoleId', { jobRoleId });
+            }
         }
-        return this.skillsRepository.find({
-            where,
-            relations: ['manager', 'jobRole'],
-        });
+
+        return query.getMany();
     }
 
     async findOne(id: number, managerId: number): Promise<Skill | undefined> {
