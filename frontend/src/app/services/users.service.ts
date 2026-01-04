@@ -25,6 +25,14 @@ export class UsersService {
     return this.http.delete(`${this.apiUrl}/${userId}`);
   }
 
+  updateUserDetails(userId: number, data: { realName: string; email: string }): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${userId}/details`, data);
+  }
+
+  updateUserPassword(userId: number, data: { currentPass: string; newPass: string }): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${userId}/password`, data);
+  }
+
   assignManager(employeeId: number, managerId: number | null): Observable<any> {
     return this.http.patch(`${this.apiUrl}/${employeeId}/assign-manager`, { managerId });
   }

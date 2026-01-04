@@ -2,6 +2,7 @@
     <h2>{{ title }}</h2>
     <div class="header-actions">
         <button *ngIf="backLink" [routerLink]="backLink" class="back-btn">{{ backLabel }}</button>
+        <button *ngIf="showLogout" routerLink="/manage-user" class="manage-btn">Manage User</button>
         <button *ngIf="showLogout" (click)="logout()" class="logout-btn">Logout</button>
     </div>
 </header>

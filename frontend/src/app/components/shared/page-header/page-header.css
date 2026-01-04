@@ -47,3 +47,18 @@ h2 {
     background-color: #dc3545;
     color: white;
 }
+
+.manage-btn {
+    background-color: transparent;
+    color: #2196F3;
+    border: 1px solid #2196F3;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.manage-btn:hover {
+    background-color: #2196F3;
+    color: white;
+}

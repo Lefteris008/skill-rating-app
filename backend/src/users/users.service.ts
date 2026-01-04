@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
@@ -85,7 +85,7 @@ export class UsersService {
             .execute();
 
         // Then delete the user (ratings will cascade delete automatically)
-        const user = await this.usersRepository.findOne({ 
+        const user = await this.usersRepository.findOne({
             where: { id: userId }
         });
         if (!user) {
@@ -105,5 +105,49 @@ export class UsersService {
         user.targetRole = { id: targetRoleId } as any;
 
         return this.usersRepository.save(user);
+    }
+
+    async updateDetails(userId: number, realName: string, email: string): Promise<User> {
+        console.log(`[UsersService] Updating details for user ${userId}:`, { realName, email });
+        const user = await this.usersRepository.findOne({ where: { id: userId } });
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+
+        // Check if email is being changed and if it's already taken
+        if (email !== user.email) {
+            const existingUser = await this.usersRepository.findOne({ where: { email } });
+            if (existingUser) {
+                console.warn(`[UsersService] Email ${email} already in use`);
+                throw new BadRequestException('Email already in use');
+            }
+        }
+
+        user.realName = realName;
+        user.email = email;
+        const savedUser = await this.usersRepository.save(user); // Wait for save
+        console.log(`[UsersService] Details updated successfully for user ${userId}`);
+        // Return a fresh copy without password
+        const { password, ...result } = savedUser;
+        return result as User;
+    }
+
+    async updatePassword(userId: number, currentPass: string, newPass: string): Promise<void> {
+        console.log(`[UsersService] Updating password for user ${userId}`);
+        const user = await this.usersRepository.findOne({ where: { id: userId } });
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+
+        const isMatch = await bcrypt.compare(currentPass, user.password);
+        if (!isMatch) {
+            console.warn(`[UsersService] Current password mismatch for user ${userId}`);
+            throw new BadRequestException('Current password is incorrect');
+        }
+
+        const salt = await bcrypt.genSalt();
+        user.password = await bcrypt.hash(newPass, salt);
+        await this.usersRepository.save(user);
+        console.log(`[UsersService] Password updated successfully for user ${userId}`);
     }
 }

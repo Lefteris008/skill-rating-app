@@ -1,0 +1,51 @@
+<div class="manage-user-container">
+    <app-page-header [title]="'Manage User: ' + username" [backLink]="backLink"
+        [backLabel]="backLabel"></app-page-header>
+
+    <div class="section">
+        <h3>Details</h3>
+        <div class="form-group">
+            <label>Display Name</label>
+            <input [(ngModel)]="realName" placeholder="Enter your full name">
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <input [(ngModel)]="email" placeholder="Enter your email address">
+        </div>
+        <div class="actions">
+            <button (click)="saveDetails()" [disabled]="!isDetailsValid()">Save Details</button>
+        </div>
+        <div *ngIf="detailsSuccess" class="success-message">Details updated successfully!</div>
+        <div *ngIf="detailsError" class="error-message">{{ detailsError }}</div>
+    </div>
+
+    <div class="section">
+        <h3>Password</h3>
+        <div class="form-group">
+            <label>Current Password</label>
+            <input type="password" [(ngModel)]="currentPassword" placeholder="Enter current password">
+        </div>
+        <div class="form-group">
+            <label>New Password</label>
+            <input type="password" [(ngModel)]="newPassword" placeholder="Min 8 chars, Upper, Lower, Number, Symbol"
+                [class.error]="newPassword && !checkPasswordComplexity(newPassword)">
+            <div *ngIf="newPassword && !checkPasswordComplexity(newPassword)" class="error-message">
+                Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase
+                letter, one number, and one symbol.
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Repeat Password</label>
+            <input type="password" [(ngModel)]="repeatPassword" placeholder="Repeat new password"
+                [class.error]="repeatPassword && newPassword !== repeatPassword">
+            <div *ngIf="repeatPassword && newPassword !== repeatPassword" class="error-message">
+                Passwords do not match.
+            </div>
+        </div>
+        <div class="actions">
+            <button (click)="changePassword()" [disabled]="!isPasswordValid()">Change Password</button>
+        </div>
+        <div *ngIf="passwordSuccess" class="success-message">Password changed successfully!</div>
+        <div *ngIf="passwordError" class="error-message">{{ passwordError }}</div>
+    </div>
+</div>

@@ -7,6 +7,7 @@ import { EmployeeRatingComponent } from './components/employee-rating/employee-r
 import { RatingResultsComponent } from './components/rating-results/rating-results';
 import { SkillsManagementComponent } from './components/skills-management/skills-management';
 import { TeamRolesComponent } from './components/team-roles/team-roles';
+import { ManageUserComponent } from './components/manage-user/manage-user';
 import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -19,4 +20,5 @@ export const routes: Routes = [
     { path: 'team-roles', component: TeamRolesComponent, canActivate: [AuthGuard] },
     { path: 'employee-rating/:id', component: EmployeeRatingComponent, canActivate: [AuthGuard] },
     { path: 'rating-results/:id', component: RatingResultsComponent, canActivate: [AuthGuard] },
+    { path: 'manage-user', component: ManageUserComponent, canActivate: [AuthGuard] },
 ];
