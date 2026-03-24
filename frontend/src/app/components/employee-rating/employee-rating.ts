@@ -29,6 +29,7 @@ export class EmployeeRatingComponent implements OnInit {
   managerName: string = '';
   isSubmitting: boolean = false;
   showSubmitConfirmation = false;
+  commentOverLimitError = false;
 
   ngOnInit() {
     this.employeeId = Number(this.route.snapshot.paramMap.get('id'));
@@ -47,6 +48,11 @@ export class EmployeeRatingComponent implements OnInit {
 
   openSubmitConfirmation() {
     if (this.isSubmitting) return;
+    if (this.heatmapComponent?.hasOverLimitComment()) {
+      this.commentOverLimitError = true;
+      return;
+    }
+    this.commentOverLimitError = false;
     this.showSubmitConfirmation = true;
   }
 
@@ -77,15 +83,17 @@ export class EmployeeRatingComponent implements OnInit {
 
     this.isSubmitting = true;
     const managerRatings = this.heatmapComponent.getManagerRatings();
+    const managerComments = this.heatmapComponent.getManagerComments();
 
     console.log('Manager ratings to save:', managerRatings);
 
     // Convert Map to array of rating requests
     const ratingRequests: any[] = [];
     managerRatings.forEach((value: number, skillId: number) => {
+      const comment = managerComments.get(skillId);
       console.log(`Saving manager rating: skill ${skillId} = ${value}`);
       ratingRequests.push(
-        this.ratingsService.saveManagerRating(this.employeeId!, skillId, value)
+        this.ratingsService.saveManagerRating(this.employeeId!, skillId, value, comment)
       );
     });
 

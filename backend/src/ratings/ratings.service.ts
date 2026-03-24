@@ -28,7 +28,7 @@ export class RatingsService {
         return this.ratingsRepository.save(rating);
     }
 
-    async createOrUpdateManagerRating(subordinateId: number, skillId: number, ratingValue: number): Promise<Rating> {
+    async createOrUpdateManagerRating(subordinateId: number, skillId: number, ratingValue: number, comment?: string): Promise<Rating> {
         let rating = await this.ratingsRepository.findOne({
             where: { user: { id: subordinateId }, skill: { id: skillId } },
         });
@@ -38,9 +38,11 @@ export class RatingsService {
                 user: { id: subordinateId },
                 skill: { id: skillId },
                 managerRating: ratingValue,
+                managerComment: comment ?? null,
             });
         } else {
             rating.managerRating = ratingValue;
+            rating.managerComment = comment !== undefined ? (comment || null) : rating.managerComment;
         }
 
         return this.ratingsRepository.save(rating);
@@ -76,8 +78,8 @@ export class RatingsService {
 
         return ratings.map(r => {
             if (!r.isFinalized) {
-                // Hide manager rating if not finalized
-                const { managerRating, ...rest } = r;
+                // Hide manager rating and comment if not finalized
+                const { managerRating, managerComment, ...rest } = r;
                 return rest as Rating;
             }
             return r;
@@ -95,7 +97,7 @@ export class RatingsService {
         await this.ratingsRepository
             .createQueryBuilder()
             .update()
-            .set({ managerRating: () => 'NULL', isFinalized: false })
+            .set({ managerRating: () => 'NULL', selfRating: () => 'NULL', managerComment: () => 'NULL', isFinalized: false })
             .where('userId = :id', { id: subordinateId })
             .execute();
     }

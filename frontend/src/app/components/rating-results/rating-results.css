@@ -4,6 +4,30 @@
     margin: 0 auto;
 }
 
+.manager-comment-display {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: #f8f9fa;
+    border-left: 3px solid #4CAF50;
+    border-radius: 4px;
+}
+
+.comment-display-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.comment-display-text {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+    white-space: pre-wrap;
+}
+
+
 .results-container.manager-pending .results-content {
     filter: grayscale(1);
     opacity: 0.6;

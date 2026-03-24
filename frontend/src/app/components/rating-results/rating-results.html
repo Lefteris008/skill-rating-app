@@ -58,6 +58,12 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Manager comment -->
+                <div *ngIf="getRatingsForSkill(skill.id).managerComment" class="manager-comment-display">
+                    <span class="comment-display-label">Manager comments:</span>
+                    <p class="comment-display-text">{{ getRatingsForSkill(skill.id).managerComment }}</p>
+                </div>
             </div>
         </div>
     </div>

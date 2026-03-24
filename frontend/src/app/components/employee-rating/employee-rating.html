@@ -8,6 +8,9 @@
     </div>
 
     <div class="submit-section">
+        <p *ngIf="commentOverLimitError" class="comment-error">
+            One or more comments exceed 1000 words. Please shorten them before submitting.
+        </p>
         <button (click)="openSubmitConfirmation()" [disabled]="isSubmitting" class="submit-btn">
             {{ isSubmitting ? 'Submitting...' : 'Submit Ratings' }}
         </button>

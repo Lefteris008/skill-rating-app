@@ -108,18 +108,14 @@ export class DashboardComponent implements OnInit {
   }
 
   private checkSelfAssessmentStatus() {
-    const storageKey = this.getSelfAssessmentStorageKey();
-    if (localStorage.getItem(storageKey) === 'true') {
-      this.hasCompletedSelfAssessment = true;
-      this.selfAssessmentError = null;
-      return;
-    }
-
     this.ratingsService.getRatings(this.user.sub).subscribe(ratings => {
       this.hasCompletedSelfAssessment = ratings.some(r => r.selfRating && r.selfRating > 0);
+      const storageKey = this.getSelfAssessmentStorageKey();
       if (this.hasCompletedSelfAssessment) {
         localStorage.setItem(storageKey, 'true');
         this.selfAssessmentError = null;
+      } else {
+        localStorage.removeItem(storageKey);
       }
     });
   }

@@ -77,7 +77,8 @@ export class RatingResultsComponent implements OnInit {
           this.ratings[r.skillId] = {
             employeeRating: r.selfRating || 0,
             managerRating: r.managerRating || 0,
-            target: r.targetRating || 0
+            target: r.targetRating || 0,
+            managerComment: r.managerComment || null
           };
         });
         console.log('Processed ratings:', this.ratings);

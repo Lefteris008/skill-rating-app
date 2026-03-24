@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { SkillsService } from '../../services/skills.service';
 import { RatingsService } from '../../services/ratings.service';
 import { AuthService } from '../../services/auth.service';
@@ -7,7 +8,7 @@ import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-skill-heatmap',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './skill-heatmap.html',
   styleUrl: './skill-heatmap.css',
 })
@@ -27,6 +28,7 @@ export class SkillHeatmapComponent implements OnInit, OnChanges {
   employeeSelfRatings: any[] = []; // Employee's original self-ratings (for reference)
   managerRatings: Map<number, number> = new Map(); // Local manager ratings before submit
   selfRatings: Map<number, number> = new Map(); // Local employee ratings before submit
+  managerComments: Record<number, string> = {}; // Local manager comments per skill
   user: any = null;
 
   ngOnInit() {
@@ -65,6 +67,14 @@ export class SkillHeatmapComponent implements OnInit, OnChanges {
           this.employeeSelfRatings = ratings.filter(r => r.selfRating && r.selfRating > 0);
         }
         this.ratings = ratings;
+
+      if (this.isManagerView) {
+          ratings.forEach(rating => {
+            if (rating.managerComment) {
+              this.managerComments[rating.skillId] = rating.managerComment;
+            }
+          });
+        }
 
         if (!this.isManagerView) {
           ratings.forEach(rating => {
@@ -124,6 +134,23 @@ export class SkillHeatmapComponent implements OnInit, OnChanges {
 
   getManagerRatings(): Map<number, number> {
     return this.managerRatings;
+  }
+
+  getManagerComments(): Map<number, string> {
+    return new Map(
+      Object.entries(this.managerComments)
+        .filter(([, v]) => v?.trim())
+        .map(([k, v]) => [+k, v])
+    );
+  }
+
+  wordCount(text: string): number {
+    if (!text?.trim()) return 0;
+    return text.trim().split(/\s+/).length;
+  }
+
+  hasOverLimitComment(): boolean {
+    return Object.values(this.managerComments).some(c => this.wordCount(c) > 1000);
   }
 
   getSelfAssessmentPayload(): { skillId: number; value: number }[] {

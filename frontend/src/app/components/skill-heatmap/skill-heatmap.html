@@ -22,6 +22,20 @@
                     <div class="target-label">Target</div>
                 </div>
             </div>
+
+            <div *ngIf="isManagerView && !readOnly" class="manager-comment-section">
+                <label class="comment-label">Manager comments</label>
+                <textarea
+                    class="comment-textarea"
+                    [class.over-limit]="wordCount(managerComments[skill.id]) > 1000"
+                    [(ngModel)]="managerComments[skill.id]"
+                    placeholder="Optional comment..."
+                    rows="3">
+                </textarea>
+                <div class="comment-word-count" [class.over-limit]="wordCount(managerComments[skill.id]) > 1000">
+                    {{ wordCount(managerComments[skill.id]) }} / 1000 words
+                </div>
+            </div>
         </div>
     </div>
 </div>

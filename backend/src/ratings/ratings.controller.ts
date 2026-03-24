@@ -19,9 +19,9 @@ export class RatingsController {
     @Roles(UserRole.MANAGER, UserRole.ADMIN)
     async rateSubordinate(
         @Param('subordinateId') subordinateId: string,
-        @Body() body: { skillId: number; rating: number },
+        @Body() body: { skillId: number; rating: number; comment?: string },
     ) {
-        return this.ratingsService.createOrUpdateManagerRating(+subordinateId, body.skillId, body.rating);
+        return this.ratingsService.createOrUpdateManagerRating(+subordinateId, body.skillId, body.rating, body.comment);
     }
 
     @Post('target/:userId')

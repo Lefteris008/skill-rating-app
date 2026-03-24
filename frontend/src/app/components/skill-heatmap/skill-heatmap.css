@@ -8,6 +8,51 @@
     margin-bottom: 15px;
 }
 
+.manager-comment-section {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 10px;
+}
+
+.comment-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+}
+
+.comment-textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+.comment-textarea:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+.comment-textarea.over-limit {
+    border-color: #f44336;
+}
+
+.comment-word-count {
+    font-size: 12px;
+    color: #888;
+    text-align: right;
+}
+
+.comment-word-count.over-limit {
+    color: #f44336;
+    font-weight: 600;
+}
+
 .skills-list {
     display: flex;
     flex-direction: column;

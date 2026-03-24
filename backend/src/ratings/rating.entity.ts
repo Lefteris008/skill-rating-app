@@ -22,6 +22,9 @@ export class Rating {
     @Column({ type: 'int', nullable: true })
     targetRating: number | null;
 
+    @Column({ type: 'text', nullable: true })
+    managerComment: string | null;
+
     @Column({ default: false })
     isFinalized: boolean;
 }

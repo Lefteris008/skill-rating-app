@@ -20,7 +20,8 @@ export class RatingsService {
           userId: r.user?.id || userId,
           selfRating: r.selfRating || 0,
           managerRating: r.managerRating || 0,
-          targetRating: r.targetRating || 0
+          targetRating: r.targetRating || 0,
+          managerComment: r.managerComment || null
         }));
       })
     );
@@ -34,10 +35,11 @@ export class RatingsService {
     });
   }
 
-  saveManagerRating(userId: number, skillId: number, rating: number): Observable<any> {
+  saveManagerRating(userId: number, skillId: number, rating: number, comment?: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/manager/${userId}`, {
       skillId: skillId,
-      rating: rating
+      rating: rating,
+      ...(comment !== undefined ? { comment } : {})
     });
   }
 
