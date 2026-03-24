@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Delete, Get, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
 import { RatingsService } from './ratings.service';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard';
@@ -37,6 +37,12 @@ export class RatingsController {
     @Roles(UserRole.MANAGER, UserRole.ADMIN)
     async finalize(@Param('subordinateId') subordinateId: string) {
         return this.ratingsService.finalizeRatings(+subordinateId);
+    }
+
+    @Delete('manager/:subordinateId')
+    @Roles(UserRole.MANAGER, UserRole.ADMIN)
+    async clearManagerRating(@Param('subordinateId') subordinateId: string) {
+        return this.ratingsService.clearManagerRating(+subordinateId);
     }
 
     @Get('finalized-users')

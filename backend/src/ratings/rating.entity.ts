@@ -14,13 +14,13 @@ export class Rating {
     skill: Skill;
 
     @Column({ type: 'int', nullable: true })
-    selfRating: number;
+    selfRating: number | null;
 
     @Column({ type: 'int', nullable: true })
-    managerRating: number;
+    managerRating: number | null;
 
     @Column({ type: 'int', nullable: true })
-    targetRating: number;
+    targetRating: number | null;
 
     @Column({ default: false })
     isFinalized: boolean;

@@ -68,6 +68,12 @@ export class UsersController {
         return this.usersService.updatePassword(userId, body.currentPass, body.newPass);
     }
 
+    @Delete(':id')
+    @Roles(UserRole.ADMIN)
+    delete(@Param('id') id: string): Promise<void> {
+        return this.usersService.delete(+id);
+    }
+
     @Patch(':id')
     @Roles(UserRole.ADMIN)
     update(@Param('id') id: string, @Body() updateData: Partial<User>): Promise<User> {

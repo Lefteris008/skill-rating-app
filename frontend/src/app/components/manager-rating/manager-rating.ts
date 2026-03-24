@@ -21,6 +21,7 @@ export class ManagerRatingComponent implements OnInit {
 
   employees: any[] = [];
   finalizedUserIds: Set<number> = new Set();
+  confirmClearEmployee: any = null;
 
   ngOnInit() {
     this.loadEmployees();
@@ -49,6 +50,28 @@ export class ManagerRatingComponent implements OnInit {
 
   isRated(employeeId: number): boolean {
     return this.finalizedUserIds.has(employeeId);
+  }
+
+  openClearConfirm(employee: any, event: MouseEvent) {
+    event.stopPropagation();
+    this.confirmClearEmployee = employee;
+  }
+
+  cancelClear() {
+    this.confirmClearEmployee = null;
+  }
+
+  proceedClear() {
+    if (!this.confirmClearEmployee) return;
+    const employee = this.confirmClearEmployee;
+    this.confirmClearEmployee = null;
+    this.ratingsService.clearManagerRating(employee.id).subscribe({
+      next: () => this.loadEmployees(),
+      error: (err) => {
+        console.error('Failed to clear rating:', err);
+        this.confirmClearEmployee = employee;
+      },
+    });
   }
 
   logout() {

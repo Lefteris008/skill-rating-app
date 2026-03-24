@@ -8,13 +8,34 @@
     <div *ngIf="employees && employees.length > 0">
         <p>Select a team member to rate:</p>
         <ul class="employee-list">
-            <li *ngFor="let employee of employees">
+            <li *ngFor="let employee of employees" class="employee-item">
                 <button (click)="selectEmployee(employee)" [class.rated]="isRated(employee.id)">
                     {{ employee.realName }}
                     <span *ngIf="isRated(employee.id)" class="rated-badge">✅ Rated</span>
                     <span *ngIf="!isRated(employee.id)" class="not-rated-badge">ℹ️ Not yet rated</span>
                 </button>
+                <button
+                    *ngIf="isRated(employee.id)"
+                    class="clear-btn"
+                    title="Clear rating"
+                    (click)="openClearConfirm(employee, $event)"
+                >✕</button>
             </li>
         </ul>
+    </div>
+
+    <!-- Confirmation dialog -->
+    <div *ngIf="confirmClearEmployee" class="confirm-overlay">
+        <div class="confirm-dialog">
+            <p class="confirm-message">
+                You are going to clear your rating for
+                <strong>{{ confirmClearEmployee.realName }}</strong>
+                alongside their own rating. Are you sure you want to proceed?
+            </p>
+            <div class="confirm-actions">
+                <button class="btn-cancel" (click)="cancelClear()">Cancel</button>
+                <button class="btn-proceed" (click)="proceedClear()">Proceed</button>
+            </div>
+        </div>
     </div>
 </div>

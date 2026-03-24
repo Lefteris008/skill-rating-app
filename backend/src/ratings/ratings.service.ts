@@ -91,6 +91,15 @@ export class RatingsService {
         });
     }
 
+    async clearManagerRating(subordinateId: number): Promise<void> {
+        await this.ratingsRepository
+            .createQueryBuilder()
+            .update()
+            .set({ managerRating: () => 'NULL', isFinalized: false })
+            .where('userId = :id', { id: subordinateId })
+            .execute();
+    }
+
     async getFinalizedUserIds(): Promise<number[]> {
         const ratings = await this.ratingsRepository.find({
             where: { isFinalized: true },

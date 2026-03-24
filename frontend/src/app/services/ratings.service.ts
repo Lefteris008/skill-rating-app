@@ -45,6 +45,10 @@ export class RatingsService {
     return this.http.post<void>(`${this.apiUrl}/finalize/${userId}`, {});
   }
 
+  clearManagerRating(userId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/manager/${userId}`);
+  }
+
   getFinalizedUserIds(): Observable<number[]> {
     return this.http.get<number[]>(`${this.apiUrl}/finalized-users`);
   }
